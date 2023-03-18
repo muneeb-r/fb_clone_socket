@@ -1,6 +1,6 @@
 const io = require("socket.io")(8901, {
     cors: {
-        origin: "http://localhost:3000"
+        origin: "https://eledoc.netlify.app"
     }
 })
 
