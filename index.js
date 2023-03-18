@@ -1,11 +1,18 @@
-const io = require("socket.io")(8901, {
+const app = require('express')();
+const http = require('http').Server(app);
+
+const io = require("socket.io")(http, {
     cors: {
+        // origin: "http://localhost:3000"
         origin: "https://eledoc.netlify.app"
     }
 })
 
 let users = [];
-console.log('server is running')
+
+app.get('/', function(req, res) {
+    res.status(200).json({status: 'socket server is running...'});
+ });
 
 const addUser = (userId, socketId) => {
     userId && !users.some(user => user.userId === userId) &&
@@ -28,7 +35,7 @@ io.on("connection", (socket) => {
     socket.on("addUser", (userId) => {
         addUser(userId, socket.id)
         io.emit("getUsers", users)
-        console.log(users)
+        // console.log(users)
     })
 
     socket.on("sendMessage", ({ sender, receiverId, text }) => {
@@ -68,3 +75,9 @@ io.on("connection", (socket) => {
         console.log(users)
     })
 })
+
+http.listen(process.env.PORT || 8901, function() {
+    console.log('listening on *:8901');
+ });
+
+module.exports = app
